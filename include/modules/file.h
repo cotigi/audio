@@ -29,5 +29,5 @@ typedef struct {
 #endif
 
 FILE* write_header(Sheet* sheet, char filename[]);
-SheetCTX* read_sheet(char filname[]);
-SheetCTX* read_lines(FILE* file);
+bool read_sheet(SheetCTX* ctx, char filname[]);
+SheetCTX read_lines(FILE* file);

@@ -11,16 +11,20 @@
 
 int main() {
     // Frequency of the sine wave (440 Hz in this case)
-    Sheet* sheet = get_sheet("test.sheet");
+    Sheet sheet;
+	if (get_sheet(&sheet, "test.sheet"))
+	{
+		return EXIT_FAILURE;
+	}
 
-    FILE* file = write_header(sheet, PCM_FILE);
+    FILE* file = write_header(&sheet, PCM_FILE);
     if (!file) {
         return 1;
     }
 
-    for (int n = 0; n < sheet->num_notes; n++) {
-        Note **notes = sheet->notes[n];
-        int num_group = sheet->num_groups[n];
+    for (int n = 0; n < sheet.num_notes; n++) {
+        Note **notes = sheet.notes[n];
+        int num_group = sheet.num_groups[n];
 
         for (int _ = 0; _<BASE; _++) {
             double amp = calc_group(notes, num_group);
@@ -32,7 +36,7 @@ int main() {
         free(notes);
     }
 
-    free_sheet(sheet);
+    free_sheet(&sheet);
 
     fclose(file);
 

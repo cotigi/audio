@@ -18,7 +18,7 @@ typedef struct {
 } SheetCTX;
 #endif
 
-Sheet* get_sheet(char filename[]);
+bool get_sheet(Sheet* sheet, char filename[]);
 Note* process_cell(SheetCTX *ctx, Sheet *sheet, int y, int x);
 Note* contains(Note **notes, int num_group, int octave, char key);
 double calc_group(Note **notes, int n);

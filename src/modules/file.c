@@ -34,14 +34,14 @@ FILE* write_header(Sheet* sheet, char filename[]) {
     return file;
 }
 
-SheetCTX* read_sheet(char filename[]) {
+bool read_sheet(SheetCTX* ctx, char filename[]) {
     FILE* file = fopen(filename, "r");
     if (!file) {
         printf("Could not open file: %s", filename);
-        return NULL;
+		return false;
     }
 
-    SheetCTX *ctx = read_lines(file);
+    *ctx = read_lines(file);
 
     rewind(file);
 
@@ -60,10 +60,10 @@ SheetCTX* read_sheet(char filename[]) {
 
     fclose(file);
 
-    return ctx;
+    return true;
 }
 
-SheetCTX* read_lines(FILE* file) {
+SheetCTX read_lines(FILE* file) {
     int ch = 0;
     int file_length = 0;
     int max_line_length = 0;
@@ -79,10 +79,11 @@ SheetCTX* read_lines(FILE* file) {
         }
     }
 
-    SheetCTX* ctx = malloc(sizeof(SheetCTX));
-    ctx->file_length = file_length;
-    ctx->line_length = max_line_length;
-    ctx->matrix = malloc(sizeof(char)*file_length*max_line_length);
+    SheetCTX ctx = {
+		.file_length = file_length,
+		.line_length = max_line_length,
+		.matrix      = malloc(sizeof(char)*file_length*max_line_length)
+	};
 
     return ctx;
 }

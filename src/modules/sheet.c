@@ -5,20 +5,23 @@
 #include "../../include/modules/sheet.h"
 #include "../../include/modules/file.h"
 
-Sheet* get_sheet(char filename[]) {
-    SheetCTX *ctx = read_sheet(filename);
-    Sheet *sheet = malloc(sizeof(Sheet));
+bool get_sheet(Sheet* sheet, char filename[]) {
+    SheetCTX ctx;
+	if (!read_sheet(&ctx, filename))
+	{
+		return NULL;
+	}
     sheet->duration = 0.0;
-    sheet->num_notes = ctx->file_length-2;
-    sheet->num_groups = malloc(sizeof(int)*(ctx->file_length-2));
-    sheet->notes = malloc(sizeof(Note)*(ctx->file_length-2));
+    sheet->num_notes = ctx.file_length-2;
+    sheet->num_groups = malloc(sizeof(int)*(ctx.file_length-2));
+    sheet->notes = malloc(sizeof(Note)*(ctx.file_length-2));
 
-    for (int y = 2; y < ctx->file_length; y++) {
-        Note **notes = malloc(sizeof(Note));
+    for (int y = 2; y < ctx.file_length; y++) {
+        Note **notes = malloc(sizeof(Note*));
         int size = 0;
 
-        for (int x = 0; x < ctx->line_length; x++) {
-            Note *note = process_cell(ctx, sheet, y, x);
+        for (int x = 0; x < ctx.line_length; x++) {
+            Note *note = process_cell(&ctx, sheet, y, x);
             if (note != NULL) {
                 sheet->duration += duration(note->duration);
                 size++;
@@ -33,8 +36,7 @@ Sheet* get_sheet(char filename[]) {
 
     sheet->duration = duration(EIGHT)*sheet->num_notes;
 
-    free(ctx->matrix);
-    free(ctx);
+    free(ctx.matrix);
 
     return sheet;
 }
@@ -113,5 +115,5 @@ void free_sheet(Sheet *sheet) {
 
     free(sheet->notes);
     free(sheet->num_groups);
-    free(sheet);
+    //free(sheet);
 }
