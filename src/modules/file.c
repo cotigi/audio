@@ -38,23 +38,22 @@ bool read_sheet(SheetCTX* ctx, char filename[]) {
     FILE* file = fopen(filename, "r");
     if (!file) {
         printf("Could not open file: %s", filename);
-		return false;
+        return false;
     }
 
     *ctx = read_lines(file);
-
     rewind(file);
 
-    int ch = 0;
     int y = 0;
     int x = 0;
-    for (ch = getc(file); ch != EOF; ch = getc(file)) {
+    for (int ch; (ch = getc(file)) != EOF; ) {
         if (ch == '\n') {
-            y++;
+            ++y;
             x = 0;
         } else {
-            ctx->matrix[y * (ctx->line_length) + x] = ch;
-            x++;
+            const size_t pos = ctx->line_length * y + x;
+            ctx->matrix[pos] = ch;
+            ++x;
         }
     }
 
@@ -64,26 +63,27 @@ bool read_sheet(SheetCTX* ctx, char filename[]) {
 }
 
 SheetCTX read_lines(FILE* file) {
-    int ch = 0;
     int file_length = 0;
     int max_line_length = 0;
     int line_length = 0;
 
-    for (ch = getc(file); ch != EOF; ch = getc(file)) {
+    for (int ch; (ch = getc(file)) != EOF; ) {
         if (ch == '\n') {
-            file_length++;
-            max_line_length = (line_length > max_line_length) ? line_length : max_line_length;
+            ++file_length;
+            if (max_line_length < line_length) {
+                max_line_length = line_length;
+            }
             line_length = 0;
         } else {
-            line_length++;
+            ++line_length;
         }
     }
 
     SheetCTX ctx = {
-		.file_length = file_length,
-		.line_length = max_line_length,
-		.matrix      = malloc(sizeof(char)*file_length*max_line_length)
-	};
+        .file_length = file_length,
+        .line_length = max_line_length,
+        .matrix      = malloc(sizeof(char)*file_length*max_line_length)
+    };
 
     return ctx;
 }
