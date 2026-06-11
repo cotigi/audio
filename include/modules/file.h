@@ -30,5 +30,6 @@ typedef struct {
 #endif
 
 FILE* write_header(Sheet* sheet, char filename[]);
-bool read_sheet(SheetCTX* ctx, char filname[]);
+bool read_sheet(SheetCTX* ctx, Sheet *sheet, char filname[]);
+void count_groups(SheetCTX *ctx, Sheet *sheet);
 SheetCTX read_lines(FILE* file);

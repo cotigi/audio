@@ -6,7 +6,7 @@
 #include "../../include/modules/note.h"
 #include "../../include/modules/file.h"
 
-FILE* write_header(Sheet* sheet, char filename[]) {
+FILE* write_header(Sheet *sheet, char filename[]) {
     PCMHeader header;
 
     memcpy(header.chunkID, "RIFF", 4);
@@ -34,7 +34,7 @@ FILE* write_header(Sheet* sheet, char filename[]) {
     return file;
 }
 
-bool read_sheet(SheetCTX* ctx, char filename[]) {
+bool read_sheet(SheetCTX* ctx, Sheet *sheet, char filename[]) {
     FILE* file = fopen(filename, "r");
     if (!file) {
         printf("Could not open file: %s", filename);
@@ -60,7 +60,27 @@ bool read_sheet(SheetCTX* ctx, char filename[]) {
 
     fclose(file);
 
+    count_groups(ctx, sheet);
+
     return true;
+}
+
+void count_groups(SheetCTX *ctx, Sheet *sheet) {
+    sheet->num_groups = malloc(sizeof(int)*(ctx->file_length-2));
+
+    for (int y = 2; y < ctx->file_length; y++) {
+        int note_count = 0;
+
+        for (int x = 0; x < ctx->line_length; x++) {
+            int ch = ctx->matrix[(y) * ctx->line_length + x];
+
+            note_count += (
+                ch == 'X' || ch == '.'
+            ) ? 1 : 0;
+        }
+
+        sheet->num_groups[y-2] = note_count;
+    }
 }
 
 SheetCTX read_lines(FILE* file) {
@@ -68,12 +88,15 @@ SheetCTX read_lines(FILE* file) {
     int file_length = 0;
     int max_line_length = 0;
     int line_length = 0;
+    int note_count = 0;
 
     for (ch = getc(file); ch != EOF; ch = getc(file)) {
         if (ch == '\n') {
             file_length++;
             max_line_length = (line_length > max_line_length) ? line_length : max_line_length;
             line_length = 0;
+        } else if (ch == 'X' || ch == '.') {
+            note_count++;
         } else {
             line_length++;
         }
@@ -82,6 +105,7 @@ SheetCTX read_lines(FILE* file) {
     SheetCTX ctx = {
 		.file_length = file_length,
 		.line_length = max_line_length,
+        .note_count  = note_count,
 		.matrix      = malloc(sizeof(char)*file_length*max_line_length)
 	};
 
