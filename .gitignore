@@ -57,3 +57,5 @@ dkms.conf
 # custom
 build/
 *.pcm
+vgcore*
+*.swp
