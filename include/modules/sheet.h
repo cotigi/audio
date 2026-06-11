@@ -1,4 +1,5 @@
 #include "note.h"
+#include <stdbool.h>
 
 #ifndef SHEET_HEADER
 #define SHEET_HEADER
