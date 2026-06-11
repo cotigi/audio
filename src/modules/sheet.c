@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <malloc.h>
@@ -87,7 +86,6 @@ Note* contains(Note **notes, int num_group, int octave, char key) {
 
 double calc_group(Note **notes, int n) {
     double amp = 0.0;
-    printf(Á)é
 
     for (int i = 0; i < n; i++) {
         Note *origin = (notes[i]->origin) ? notes[i]->origin : notes[i];
