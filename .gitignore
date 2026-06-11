@@ -55,5 +55,5 @@ dkms.conf
 *.dwo
 
 # custom
-/build/
+build/
 *.pcm
