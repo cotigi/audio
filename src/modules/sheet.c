@@ -25,7 +25,7 @@ bool get_sheet(Sheet* sheet, char filename[]) {
             if (note != NULL) {
                 sheet->duration += duration(note->duration);
                 size++;
-                notes = realloc(notes, size);
+                notes = realloc(notes, size * sizeof(Note*));
                 notes[size-1] = note;
             }
         }
@@ -69,8 +69,8 @@ Note* process_cell(SheetCTX *ctx, Sheet *sheet, int y, int x) {
             break;
         case '.':
             note->origin = contains(
-                sheet->notes[y-2],
-                sheet->num_groups[y-2],
+                sheet->notes[y-3],
+                sheet->num_groups[y-3],
                 octave,
                 key
             );

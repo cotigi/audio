@@ -12,7 +12,7 @@
 int main() {
     // Frequency of the sine wave (440 Hz in this case)
     Sheet sheet;
-	if (get_sheet(&sheet, "test.sheet"))
+	if (!get_sheet(&sheet, "test.sheet"))
 	{
 		return EXIT_FAILURE;
 	}
