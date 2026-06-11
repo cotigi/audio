@@ -7,14 +7,14 @@
 
 bool get_sheet(Sheet* sheet, char filename[]) {
     SheetCTX ctx;
-	if (!read_sheet(&ctx, filename))
-	{
-		return NULL;
-	}
+    if (!read_sheet(&ctx, filename))
+    {
+        return false;
+    }
     sheet->duration = 0.0;
     sheet->num_notes = ctx.file_length-2;
     sheet->num_groups = malloc(sizeof(int)*(ctx.file_length-2));
-    sheet->notes = malloc(sizeof(Note)*(ctx.file_length-2));
+    sheet->notes = malloc(sizeof(Note**)*(ctx.file_length-2));
 
     for (int y = 2; y < ctx.file_length; y++) {
         Note **notes = malloc(sizeof(Note*));
@@ -31,14 +31,18 @@ bool get_sheet(Sheet* sheet, char filename[]) {
         }
 
         sheet->num_groups[y-2] = size;
-        sheet->notes[y-2] = (size != 0) ? notes : NULL;
+        if (size) {
+            sheet->notes[y-2] = notes;
+        } else {
+            sheet->notes[y-2] = NULL;
+        }
     }
 
     sheet->duration = duration(EIGHT)*sheet->num_notes;
 
     free(ctx.matrix);
 
-    return sheet;
+    return true;
 }
 
 Note* process_cell(SheetCTX *ctx, Sheet *sheet, int y, int x) {
