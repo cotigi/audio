@@ -69,8 +69,8 @@ Note* process_cell(SheetCTX *ctx, Sheet *sheet, int y, int x) {
             break;
         case '.':
             note->origin = contains(
-                sheet->notes[y-3],
-                sheet->num_groups[y-3],
+                sheet->notes[y-2],
+                sheet->num_groups[y-2],
                 octave,
                 key
             );
